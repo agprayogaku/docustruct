@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DocuStruct AI — Intelligent Document-to-Database Extractor for IBM AI Builders Challenge" />
+  <title>DocuStruct AI — Intelligent Document-to-Database Extractor</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            indigo: { DEFAULT: '#4F46E5', 50: '#EEF2FF', 100: '#E0E7FF', 600: '#4F46E5', 700: '#4338CA' },
+            slate:  { 50: '#F8FAFC', 100: '#F1F5F9', 200: '#E2E8F0', 700: '#334155', 800: '#1E293B', 900: '#0F172A' },
+            emerald:{ 50: '#ECFDF5', 100: '#D1FAE5', 500: '#10B981', 600: '#059669', 700: '#047857' },
+            amber:  { 50: '#FFFBEB', 100: '#FEF3C7', 500: '#F59E0B', 600: '#D97706', 700: '#B45309' },
+            red:    { 50: '#FFF1F2', 100: '#FFE4E6', 500: '#EF4444', 600: '#DC2626' },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
+
+  <!-- ===================== APP HEADER ===================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="app-logo-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="#4F46E5"/>
+            <path d="M8 10h10M8 14h8M8 18h12M8 22h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="24" cy="22" r="5" fill="#10B981"/>
+            <path d="M22 22l1.5 1.5L26 20" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">DocuStruct <span class="text-indigo-600">AI</span></h1>
+          <p class="text-xs text-slate-500 leading-none">Intelligent Document-to-Database Extractor</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+          IBM AI Builders Challenge — Track IT
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ===================== KPI DASHBOARD ===================== -->
+    <section aria-label="KPI Dashboard" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- KPI Card: Total Processed -->
+      <article class="kpi-card bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Diproses</p>
+            <p class="text-3xl font-bold text-slate-900 mt-1" id="kpi-total">0</p>
+          </div>
+          <div class="kpi-icon bg-indigo-50 text-indigo-600 rounded-lg p-2" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">dokumen &amp; sesi</p>
+      </article>
+
+      <!-- KPI Card: Valid Entries -->
+      <article class="kpi-card bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Entri Valid</p>
+            <p class="text-3xl font-bold text-emerald-600 mt-1" id="kpi-valid">0</p>
+          </div>
+          <div class="kpi-icon bg-emerald-50 text-emerald-600 rounded-lg p-2" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">data lengkap &amp; valid</p>
+      </article>
+
+      <!-- KPI Card: Needs Review -->
+      <article class="kpi-card bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Perlu Review</p>
+            <p class="text-3xl font-bold text-amber-500 mt-1" id="kpi-review">0</p>
+          </div>
+          <div class="kpi-icon bg-amber-50 text-amber-500 rounded-lg p-2" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">data anomali / tidak lengkap</p>
+      </article>
+
+      <!-- KPI Card: Accuracy Rate -->
+      <article class="kpi-card bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Tingkat Akurasi</p>
+            <p class="text-3xl font-bold text-indigo-600 mt-1" id="kpi-accuracy">0%</p>
+          </div>
+          <div class="kpi-icon bg-indigo-50 text-indigo-600 rounded-lg p-2" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+        </div>
+        <div class="mt-2 w-full bg-slate-100 rounded-full h-1.5">
+          <div class="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" id="kpi-accuracy-bar" style="width:0%"></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== INPUT PANEL ===================== -->
+    <section aria-label="Panel Input Dokumen" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-base font-semibold text-slate-900">Input Dokumen Tidak Terstruktur</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Tempelkan teks laporan, log operasional, atau berita acara bebas untuk diekstraksi.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <label for="sample-select" class="text-xs text-slate-500 sr-only">Pilih Contoh</label>
+          <select id="sample-select" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer">
+            <option value="">— Pilih Contoh Data —</option>
+            <option value="1">Contoh 1: Log Kunjungan Tamu</option>
+            <option value="2">Contoh 2: Laporan Kegiatan Harian</option>
+            <option value="3">Contoh 3: Berita Acara Rapat</option>
+          </select>
+          <button id="btn-load-sample" class="btn-secondary text-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition font-medium">
+            Muat Contoh
+          </button>
+        </div>
+      </div>
+
+      <textarea
+        id="document-input"
+        rows="8"
+        class="w-full text-sm border border-slate-200 rounded-lg p-3 font-mono text-slate-700 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:bg-white resize-y transition placeholder:text-slate-400"
+        placeholder="Tempelkan atau ketik teks dokumen tidak terstruktur di sini...&#10;&#10;Contoh:&#10;Tanggal: 15 Januari 2025&#10;Nama: Budi Santoso, Divisi IT, hadir pukul 09:00 untuk keperluan instalasi server.&#10;Status: Selesai"
+        aria-label="Input teks dokumen tidak terstruktur"
+        spellcheck="false"
+      ></textarea>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-3">
+        <p class="text-xs text-slate-400" id="char-count">0 karakter</p>
+        <div class="flex items-center gap-2">
+          <button id="btn-clear-input" class="text-xs text-slate-400 hover:text-red-500 transition font-medium px-2 py-1.5">
+            Bersihkan
+          </button>
+          <button id="btn-extract" class="btn-primary flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition shadow-sm active:scale-95">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Ekstrak ke Database
+          </button>
+        </div>
+      </div>
+
+      <!-- Extraction Progress / Feedback -->
+      <div id="extract-feedback" class="hidden mt-3 text-xs rounded-lg px-3 py-2 font-medium" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- ===================== DATABASE TABLE ===================== -->
+    <section aria-label="Database Terstruktur" class="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <!-- Table Controls -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 border-b border-slate-100">
+        <div>
+          <h2 class="text-base font-semibold text-slate-900">Database Terstruktur</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Hasil ekstraksi. Klik baris untuk mengedit secara inline.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Filter Buttons -->
+          <div class="flex items-center bg-slate-100 rounded-lg p-0.5 text-xs font-medium gap-0.5" role="group" aria-label="Filter status">
+            <button class="filter-btn active px-3 py-1.5 rounded-md transition" data-filter="all">Semua</button>
+            <button class="filter-btn px-3 py-1.5 rounded-md transition" data-filter="valid">Valid</button>
+            <button class="filter-btn px-3 py-1.5 rounded-md transition" data-filter="review">Perlu Review</button>
+          </div>
+          <!-- Search -->
+          <div class="relative">
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Cari data..."
+              class="text-xs pl-7 pr-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 w-40"
+              aria-label="Cari entri database"
+            />
+          </div>
+          <!-- Export Buttons -->
+          <button id="btn-export-csv" class="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-lg transition" title="Unduh sebagai CSV">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV
+          </button>
+          <button id="btn-export-json" class="flex items-center gap-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition" title="Unduh sebagai JSON">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            JSON
+          </button>
+          <!-- Copy SQL -->
+          <button id="btn-copy-sql" class="flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 py-1.5 rounded-lg transition" title="Salin SQL INSERT INTO ke clipboard">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            SQL
+          </button>
+          <!-- Clear All -->
+          <button id="btn-clear-db" class="flex items-center gap-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1.5 rounded-lg transition" title="Hapus semua data">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Hapus Semua
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Wrapper -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Tabel database terstruktur">
+          <thead>
+            <tr class="text-xs text-slate-500 uppercase tracking-wide bg-slate-50 border-b border-slate-100">
+              <th class="text-left px-4 py-3 font-semibold w-8">#</th>
+              <th class="text-left px-4 py-3 font-semibold">Nama / Subjek</th>
+              <th class="text-left px-4 py-3 font-semibold">Tanggal / Waktu</th>
+              <th class="text-left px-4 py-3 font-semibold">Kategori</th>
+              <th class="text-left px-4 py-3 font-semibold">Lokasi / Unit</th>
+              <th class="text-left px-4 py-3 font-semibold">Status / Keterangan</th>
+              <th class="text-left px-4 py-3 font-semibold">Confidence</th>
+              <th class="text-left px-4 py-3 font-semibold">Validasi</th>
+              <th class="text-right px-4 py-3 font-semibold">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="db-table-body" class="divide-y divide-slate-100">
+            <!-- Rows injected by script.js -->
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="py-16 flex-col items-center gap-3 text-slate-400">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <p class="text-sm font-medium">Belum ada data</p>
+          <p class="text-xs text-center max-w-xs">Muat contoh data atau tempelkan teks dokumen, lalu klik <strong>"Ekstrak ke Database"</strong> untuk memulai.</p>
+        </div>
+      </div>
+
+      <!-- Table Footer -->
+      <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+        <span id="table-info">Menampilkan 0 dari 0 entri</span>
+        <span id="table-storage-info"></span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== EDIT MODAL ===================== -->
+  <div id="edit-modal" class="modal-overlay hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel bg-white rounded-2xl shadow-xl w-full max-w-lg" role="document">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <h3 id="modal-title" class="text-base font-semibold text-slate-900">Edit Entri</h3>
+        <button id="modal-close" class="text-slate-400 hover:text-slate-700 transition rounded-full p-1 hover:bg-slate-100" aria-label="Tutup modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <input type="hidden" id="modal-id" />
+        <div class="form-group">
+          <label for="modal-name" class="form-label">Nama / Subjek</label>
+          <input type="text" id="modal-name" class="form-input" placeholder="Nama atau subjek utama" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-group">
+            <label for="modal-date" class="form-label">Tanggal</label>
+            <input type="text" id="modal-date" class="form-input" placeholder="cth. 15 Jan 2025" />
+          </div>
+          <div class="form-group">
+            <label for="modal-time" class="form-label">Waktu</label>
+            <input type="text" id="modal-time" class="form-input" placeholder="cth. 09:00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="modal-category" class="form-label">Kategori / Jenis Kegiatan</label>
+          <input type="text" id="modal-category" class="form-input" placeholder="cth. Kunjungan, Rapat, Pelatihan" />
+        </div>
+        <div class="form-group">
+          <label for="modal-location" class="form-label">Lokasi / Unit</label>
+          <input type="text" id="modal-location" class="form-input" placeholder="cth. Gedung A, Divisi IT" />
+        </div>
+        <div class="form-group">
+          <label for="modal-status" class="form-label">Status / Keterangan</label>
+          <input type="text" id="modal-status" class="form-input" placeholder="cth. Selesai, Dalam Proses" />
+        </div>
+        <div class="form-group">
+          <label for="modal-validation" class="form-label">Status Validasi</label>
+          <select id="modal-validation" class="form-input">
+            <option value="valid">✓ Valid</option>
+            <option value="review">⚠ Perlu Review</option>
+          </select>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
+        <button id="modal-cancel" class="text-sm font-medium text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-100 transition">Batal</button>
+        <button id="modal-save" class="text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-sm">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONFIRM MODAL ===================== -->
+  <div id="confirm-modal" class="modal-overlay hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-red-50 rounded-full mb-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </div>
+      <h3 id="confirm-title" class="text-base font-semibold text-slate-900 mb-1">Konfirmasi Hapus</h3>
+      <p id="confirm-message" class="text-sm text-slate-500 mb-5">Apakah Anda yakin ingin menghapus entri ini?</p>
+      <div class="flex gap-3 justify-center">
+        <button id="confirm-cancel" class="text-sm font-medium text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-100 transition border border-slate-200">Batal</button>
+        <button id="confirm-ok" class="text-sm font-semibold bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition shadow-sm">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST NOTIFICATION ===================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
